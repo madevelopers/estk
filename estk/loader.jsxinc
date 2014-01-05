@@ -1,0 +1,189 @@
+// TODO: Documentation!!! Documentation!!! Documentation!!!
+
+(function (global) {
+    var thisFile,
+        modules,
+        Module,
+        require,
+        config;
+
+    thisFile = new File($.fileName);
+
+    modules = {};
+
+    config = {
+        basePath: thisFile.path,
+        ext: '.jsxinc',
+        entryName: 'index'
+    };
+
+    require = function (id) {
+        var ext, exported;
+
+        // Validate the module now to save some work.
+        if (! isModuleValid(id)) {
+            throw new InvalidModuleException('Invalid module ID.');
+        }
+
+        ext = getExtension(id);
+
+        if (ext) {
+            config.ext = '.' + ext;
+        }
+
+        id = resolveId(removeExtension(id));
+
+        if (modules.hasOwnProperty(id)) {
+            exported =  modules[id];
+        } else {
+            exported = loadModule(id);
+            modules[id] = exported;
+        }
+
+        return exported;
+    };
+
+    require.config = function (newConfig) {
+        // TODO: Do some validations here.
+        for (key in newConfig) {
+            if (config.hasOwnProperty(key)) {
+                config[key] = newConfig[key];
+            }
+        }
+    };
+
+    function loadModule(id) {
+        var file = getModuleFile(id),
+            origPath = config.basePath,
+            exports = {},
+            module = {
+                id: id,
+                uri: file.absoluteURI
+            };
+
+        try {
+            config.basePath = file.path;
+            $.evalFile(file, 0);
+            config.basePath = origPath;
+        } catch (err) {
+            throw new Error("Can't load module: " + id + '\n' + err);
+        }
+
+        return exports;
+    };
+
+    function InvalidModuleException(message) {
+        this.message = message;
+        this.name = 'InvalidModuleException';
+    }
+
+    function ModuleNotFoundException(message, id) {
+        this.id = id;
+        this.message = message;
+        this.name = 'ModuleNotFoundException';
+    }
+
+    // TODO: work on this please
+    function isModuleValid(id) {
+        return true;
+    }
+
+    function getExtension(id) {
+        if (id.indexOf('/') !== -1) {
+            id = id.split('/').pop();
+        }
+
+        if (id.indexOf('.') !== -1) {
+            return id.split('.').pop();
+        } else {
+            return '';
+        }
+    }
+
+    function getModuleFile(id) {
+        var guessFile = new File(id + config.ext),
+            guessPackage = new File(id + '/' + config.entryName + config.ext);
+
+        if (guessFile.exists) {
+            return guessFile;
+        } else if (guessPackage.exists) {
+            return guessPackage;
+        } else {
+            throw new ModuleNotFoundException("Can't load module", id);
+        }
+    };
+
+    function getRelativeData(id, upLevel) {
+        if (typeof upLevel === 'undefined') {
+            upLevel = 0;
+        }
+
+        if (id.substring(0, 2) === './') {
+            return getRelativeData(id.substring(2), upLevel);
+        } else if (id.substring(0, 3) === '../') {
+            return getRelativeData(id.substring(3), upLevel + 1);
+        }
+
+        return {
+            id: id,
+            upLevel: upLevel
+        };
+    };
+
+    function removeExtension(id) {
+        var regex,
+            ext = getExtension(id);
+
+        if (ext) {
+            regex = new RegExp('.' + ext + '$');
+            return id.replace(regex, '');
+        } else {
+            return id;
+        }
+    }
+
+    function resolveId(id) {
+        var relData;
+
+        // This is an absolute import. No need to resolve path.
+        if (id.charAt(0) === '/') {
+            return id;
+        }
+
+        // No special directory specified.
+        // Therefore, we'll assume the current directory.
+        if (id.charAt(0) !== '.') {
+            id = './' + id;
+        }
+
+        relData = getRelativeData(id);
+        return trimPathBack(config.basePath, relData.upLevel) +
+               '/' + relData.id;
+    }
+
+    function trimPathBack(path, steps) {
+        var lastSlashIndex, lastCharIndex;
+
+        // ensure typeof string and remove trailing slash
+        path = path.toString().replace(/\/+$/, '');
+        lastSlashIndex = path.lastIndexOf('/'),
+        lastCharIndex = path.length - 1;
+
+        if (typeof steps === 'undefined') {
+            steps = 0;
+        }
+
+        // TODO: Make this efficient. It should exit immediately when
+        //       steps >= number of slashes
+        if (lastSlashIndex === -1) {
+            return '';
+        } else if (steps) {
+            steps -= 1;
+            return trimPathBack(path.substring(0, lastSlashIndex), steps);
+        } else {
+            return path;
+        }
+    }
+
+    global.require = require;
+}($.global));

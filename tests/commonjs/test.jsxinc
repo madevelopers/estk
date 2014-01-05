@@ -8,7 +8,7 @@
     app.clc();
 
     try {
-        //require('testcases/absolute/program');
+        require('testcases/absolute/program');
         
         //require('testcases/cyclic/program');
             // Needs further investigation. ESTK surrenders.
@@ -16,13 +16,13 @@
         
         //require('testcases/determinism/program');  // ERROR
         //require('testcases/exactExports/program');  // ERROR
-        //require('testcases/hasOwnProperty/program');
+        require('testcases/hasOwnProperty/program');
         require('testcases/method/program');  //FAIL members not implicitly boundfail
-        //require('testcases/missing/program');
+        require('testcases/missing/program');
         //require('testcases/monkeys/program');  // ERROR
-        //require('testcases/nested/program');
-        //require('testcases/relative/program');
-        //require('testcases/transitive/program');
+        require('testcases/nested/program');
+        require('testcases/relative/program');
+        require('testcases/transitive/program');
     } catch (ex) {
         throw new Error(ex);
     }

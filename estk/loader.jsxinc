@@ -14,7 +14,9 @@
     config = {
         basePath: thisFile.path,
         ext: '.jsxinc',
-        entryName: 'index'
+        entryName: 'index',
+        coreModules: {
+        }
     };
 
     require = function (id) {
@@ -58,7 +60,8 @@
             exports = {},
             module = {
                 id: id,
-                uri: file.absoluteURI
+                uri: file.absoluteURI,
+                exports: exports
             };
 
         try {
@@ -144,6 +147,14 @@
 
     function resolveId(id) {
         var relData;
+
+        // This is a core module
+        if (/^estk!/.test(id)) {
+            id = id.substring(5);
+            if (config.coreModules.hasOwnProperty(id)) {
+                return thisFile.path + '/' + config.coreModules[id];
+            }
+        }
 
         // This is an absolute import. No need to resolve path.
         if (id.charAt(0) === '/') {

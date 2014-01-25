@@ -38,6 +38,7 @@
         ext: '.jsxinc',
         entryName: 'index',
         coreModules: {
+            'lodash': 'lib/lodash'
         }
     };
 

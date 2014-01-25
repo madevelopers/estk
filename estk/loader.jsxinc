@@ -78,24 +78,24 @@
     };
 
     function loadModule(id) {
-        var file = getModuleFile(id),
-            origPath = config.basePath,
-            exports = {},
+        var __file__ = getModuleFile(id),
+            __origPath__ = config.basePath,
+            exports = {}
             module = {
                 id: id,
-                uri: file.absoluteURI,
+                uri: __file__.absoluteURI,
                 exports: exports
             };
 
         try {
-            config.basePath = file.path;
-            $.evalFile(file, 0);
-            config.basePath = origPath;
+            config.basePath = __file__.path;
+            $.evalFile(__file__, 0);
+            config.basePath = __origPath__;
         } catch (err) {
             throw new Error("Can't load module: " + id + '\n' + err);
         }
 
-        return exports;
+        return isEmpty(exports) ? module.exports : exports;
     };
 
     function InvalidModuleException(message) {
@@ -107,6 +107,15 @@
         this.id = id;
         this.message = message;
         this.name = 'ModuleNotFoundException';
+    }
+
+    function isEmpty(obj) {
+        for(var prop in obj) {
+            if(obj.hasOwnProperty(prop))
+                return false;
+        }
+
+        return true;
     }
 
     // TODO: work on this please

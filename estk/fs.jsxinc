@@ -26,19 +26,15 @@
         if (file && file.exists) {
             file.encoding = "UTF8";
             file.lineFeed = "unix";
-            // open the file for reading
             file.open("r");
-
-            // cache the file data
             fileData = file.read();
-
-            // close the file
             file.close();
 
             return fileData;
         } else {
             // exit immediately if the file does not exist
-            alert("The file (" + filePath + ") does not exist", "Error: File Not Found", true);
+            alert("The file (" + filePath + ") does not exist",
+                  "Error: File Not Found", true);
             return false;
         }
     };

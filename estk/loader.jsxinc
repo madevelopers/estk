@@ -38,8 +38,9 @@
         ext: '.jsxinc',
         entryName: 'index',
         coreModules: {
-            'lodash': 'lib/lodash',
-            'fs': 'fs'
+            'lodash'   : 'lib/lodash',
+            'fs'       : 'fs',
+            'indesign' : 'indesign'
         }
     };
 

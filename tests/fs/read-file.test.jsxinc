@@ -8,4 +8,4 @@
     var file = File.openDialog('Open File');
     var fileData = fs.readFile(file);
     $.writeln(fileData);
-}());
+}).call($.global);

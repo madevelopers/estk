@@ -1,0 +1,97 @@
+/**
+ * Core module for working with InDesign.
+ */
+
+(function () {
+    var indd = {},
+        _ = require('estk!lodash');        
+
+    /**
+     * Gets the current active document.
+     */
+    indd.getActiveDocument = function () {
+        if (app.documents.count()) {
+            return app.activeDocument;
+        } else {
+            alert('An active document is required. Please open/create an InDesign document.',
+                  'Error: active document required.', true);
+            exit();
+        }
+    };
+
+    indd.search = function (searchString, replacementString, config) {
+        var defaultOptions;
+
+        defaultOptions = {
+            caseSensitive: false,
+            includeFootnotes: false,
+            includeHiddenLayers: false,
+            includeLockedLayersForFind: false,
+            includeLockedStoriesForFind: false,
+            includeMasterPages: false,
+            wholeWord: false,
+            searchType: 'text',
+            doc: indd.getActiveDocument()
+        };
+
+        // replacementString is optional so treat it as config
+        // if it is an object
+        if (replacementString && typeof replacementString === 'object') {
+            config = replacementString;
+            replacementString = null;
+        }
+
+        config = _.extend(defaultOptions, config);
+
+        function findChangeText(searchStr, replStr, options) {
+            var prop;
+
+            app.findTextPreferences = NothingEnum.nothing;
+            app.changeTextPreferences = NothingEnum.nothing;
+            app.findTextPreferences.findWhat = searchStr;
+            
+            for (prop in app.findChangeTextOptions) {
+                if (options.hasOwnProperty(prop)) {
+                    app.findChangeTextOptions[prop] = options[prop];                    
+                }
+            }
+
+            if (replStr && typeof replStr === 'string') {
+                app.changeTextPreferences.changeTo = replStr;
+                options.doc.changeText();
+            }
+
+            return options.doc.findText();
+        }
+
+        function findChangeGrep(searchStr, replStr, options) {
+            var prop;
+
+            app.findGrepPreferences = NothingEnum.nothing;
+            app.changeGrepPreferences = NothingEnum.nothing;
+            app.findGrepPreferences.findWhat = searchStr;
+
+            for (prop in app.findChangeGrepOptions) {
+                if (options.hasOwnProperty(prop)) {
+                    app.findChangeGrepOptions[prop] = options[prop];
+                }
+            }
+
+            if (replStr && typeof replStr === 'string') {
+                app.changeGrepPreferences.changeTo = replStr;
+                options.doc.changeGrep();
+            }
+
+            return options.doc.findGrep();
+        }
+
+        if (config.searchType === 'grep') {
+            return findChangeGrep(searchString, replacementString, config);
+        } else {
+            // The default is text, so no condition needed
+            return findChangeText(searchString, replacementString, config);
+        }
+    };
+
+    exports = indd;
+}).call($.global);

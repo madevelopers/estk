@@ -1,0 +1,54 @@
+(function () {
+    var mixins = {
+        romanize: function (num) {
+            var result  = [],
+                romans = ['iiii', 'v', 'xxxx', 'l', 'cccc', 'd', 'mmmm'];
+
+            _.each(romans, function (roman) {
+                var ltr = roman.length + 1,
+                    remainder = num % ltr;
+
+                result.unshift(roman.substr(0, remainder));
+                num = (num - remainder) / ltr;
+            });
+
+            return result.join('')
+                         .replace(/dcccc/g, 'cm')
+                         .replace(/cccc/g,  'cd')
+                         .replace(/lxxxx/g, 'xc')
+                         .replace(/xxxx/g,  'xl')
+                         .replace(/viiii/g, 'ix')
+                         .replace(/iiii/g,  'iv');
+        },
+
+        toArabic: function (num) {
+            var values,
+                result = 0;
+
+            num = num.toUpperCase();
+            values = [['M', 1000], ['CM', 900], ['D',  500], ['CD', 400],
+                      ['C',  100], ['XC',  90], ['L',  50],  ['XL',  40],
+                      ['X',   10], ['IX',   9], ['V',   5],  ['IV',   4],
+                      ['I',    1]];
+
+            _.each(values, function (pair, i) {
+                var key = pair[0],
+                    val = pair[1],
+                    regex = RegExp('^' + key);
+
+                while (num.match(regex)) {
+                    result += val;
+                    num = num.replace(regex, '');
+                }
+            });
+
+            return result;
+        }
+    }
+
+    if (module && module.exports) {
+        exports = mixins;
+    } else {
+        _.mixin(mixins);
+    }
+}());

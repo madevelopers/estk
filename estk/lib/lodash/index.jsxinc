@@ -1,0 +1,8 @@
+var _ = require('lodash'),
+    _.str = require('string'),
+    mixins = require('mixins');
+
+_.mixin(_.str.exports());
+_.mixin(mixins);
+
+exports = _;

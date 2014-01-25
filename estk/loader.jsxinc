@@ -38,7 +38,8 @@
         ext: '.jsxinc',
         entryName: 'index',
         coreModules: {
-            'lodash': 'lib/lodash'
+            'lodash': 'lib/lodash',
+            'fs': 'fs'
         }
     };
 
@@ -94,7 +95,7 @@
         } catch (err) {
             throw new Error("Can't load module: " + id + '\n' + err);
         }
-        
+
         if (! isEmpty(module.exports)) {
             return module.exports;
         } else {

@@ -1,0 +1,107 @@
+/**
+ * FileSystem module for estk framework
+ */
+
+(function () {
+    var fs = {},
+        _ = require('estk!lodash');
+
+
+    /**
+     * Reads a file and returns its content.
+     *
+     * @filePath [string] {The file path}
+     */
+    fs.readFile = function (filePath) {
+        var file,
+            fileData;
+
+        if (filePath && typeof filePath === 'object' &&
+            filePath.constructor.name === 'File') {
+            file = filePath;
+        } else {
+            file = File(filePath);
+        }
+
+        if (file && file.exists) {
+            if (file && file.exists) {
+                file.encoding = "UTF8";
+                file.lineFeed = "unix";
+                // open the file for reading
+                file.open("r");
+
+                // cache the file data
+                fileData = file.read();
+
+                // close the file
+                file.close();
+
+                return fileData;
+            }
+        } else {
+            // exit immediately if the file does not exist
+            alert("The file (" + filePath + ") does not exist", "Error: File Not Found", true);
+            return false;
+        }
+    };
+
+
+    /**
+     * Writes data to a file.
+     *
+     * @filePath [string] {The file path}
+     * @fileData [string] {The content of the file}
+     */
+    fs.writeFile = function (fileData, filePath) {
+        var file;
+
+        if (filePath && typeof filePath === 'object' &&
+            filePath.constructor.name === 'File') {
+            file = filePath;
+        } else {
+            file = File(filePath);
+        }
+
+        if (file && file.exists) {
+            file.encoding = "UTF8";
+            file.lineFeed = "unix";
+            file.open("w");
+            file.write(fileData);
+            file.close();
+        }
+    };
+
+
+    /**
+     * Similar to fs.writeFile but it fires the save dialog first.
+     *
+     * @opt [object, string] {Could be the data or an option}
+     */
+    fs.saveToFile = function (opt) {
+        var file,
+            savePath,
+            savePrompt,
+            option;
+
+        savePrompt = 'Save File As';
+        option = _.extend({
+            data: (typeof opt === 'string') ? opt : '',
+            path: '',
+            filter: ''
+        }, opt);
+
+        if (option.path) {
+            // set the initial path to avoid users from getting lost
+            file = File(option.path);
+            savePath = file.saveDlg(savePrompt, option.filter);
+        } else {
+            savePath = File.saveDialog(savePrompt, option.filter);
+        }
+
+        if (savePath) {
+            fs.writeFile(option.data, savePath);
+        }
+    };
+
+    exports = fs;
+}());

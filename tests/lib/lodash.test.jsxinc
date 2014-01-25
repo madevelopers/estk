@@ -1,0 +1,27 @@
+(function () {
+    // Test if lodash is working. I haven't completely ported Jasmine yet
+    // so this is just a workaround test.
+
+    #include '../../estk/loader.jsxinc';
+    require.config({
+        basePath: new File($.fileName).path
+    });
+    
+    var _ = require('estk!lodash');
+    
+    function test(name, testCase, expect) {
+        var message;
+        
+        if (testCase === expect) {
+            message = 'PASS';
+        } else {
+            message = 'FAIL';
+        }
+    
+        $.writeln(name + ': ' + message);
+    }
+    
+    
+    test('_.trim()', _.trim(' hello '), 'hello');
+    test('_.romanize()', _.romanize(54), 'liv');
+}());

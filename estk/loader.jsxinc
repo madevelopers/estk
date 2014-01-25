@@ -94,8 +94,12 @@
         } catch (err) {
             throw new Error("Can't load module: " + id + '\n' + err);
         }
-
-        return isEmpty(exports) ? module.exports : exports;
+        
+        if (! isEmpty(module.exports)) {
+            return module.exports;
+        } else {
+            return exports;
+        }
     };
 
     function InvalidModuleException(message) {

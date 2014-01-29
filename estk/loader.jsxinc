@@ -72,6 +72,13 @@
 
     require.config = function (newConfig) {
         // TODO: Do some validations here.
+
+        if (newConfig.hasOwnProperty('callee')) {
+            // callee is a shorthand for basePath.
+            // it supercedes basePath when defined.
+            newConfig.basePath = new File(newConfig.callee).path
+        }
+
         for (key in newConfig) {
             if (config.hasOwnProperty(key)) {
                 config[key] = newConfig[key];

@@ -1,19 +1,19 @@
 (function () {
     #include '../../estk/loader.jsxinc';
     require.config({
-        basePath: new File($.fileName).path,
+        callee: $.fileName,
         ext: '.js'
     });
 
-    app.clc();
+    //app.clc();
 
     try {
         require('testcases/absolute/program');
-        
+
         //require('testcases/cyclic/program');
             // Needs further investigation. ESTK surrenders.
             // All other errors below are caused by this.
-        
+
         //require('testcases/determinism/program');  // ERROR
         //require('testcases/exactExports/program');  // ERROR
         require('testcases/hasOwnProperty/program');

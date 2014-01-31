@@ -39,6 +39,7 @@
         entryName: 'index',
         coreModules: {
             'lodash'   : 'lib/lodash',
+            'json'     : 'lib/json2',
             'fs'       : 'fs',
             'indesign' : 'indesign'
         }

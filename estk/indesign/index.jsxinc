@@ -21,6 +21,7 @@
 
     indd.search = function (searchString, replacementString, config) {
         var defaultOptions,
+            hasChanges = false,
             findChangeOptionsType = 'findChangeTextOptions',
             findPreferencesType   = 'findTextPreferences',
             changePreferencesType = 'changeTextPreferences',
@@ -74,6 +75,7 @@
 
         if (typeof(replacementString) !== 'undefined') {
             app[changePreferencesType].changeTo = replacementString;
+            hasChanges = true;
         }
 
         _.each(config.findPreferences, function (val, prop) {
@@ -85,6 +87,7 @@
         _.each(config.changePreferences, function (val, prop) {
             if (app[changePreferencesType].hasOwnProperty(prop)) {
                 app[changePreferencesType][prop] = val;
+                hasChanges = true;
             }
         });
 
@@ -94,15 +97,9 @@
             }
         });
 
-        if (app[changePreferencesType] !== NothingEnum.nothing) {
-            config.doc[changeFn]();
-        }
+        hasChanges && config.doc[changeFn]();
 
-        if (app[findPreferencesType] !== NothingEnum.nothing) {
-            return config.doc[findFn]();
-        } else {
-            return [];
-        }
+        return config.doc[findFn]();
     };
 
     exports = indd;

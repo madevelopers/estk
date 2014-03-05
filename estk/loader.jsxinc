@@ -41,7 +41,8 @@
             'lodash'   : 'lib/lodash',
             'json'     : 'lib/json2',
             'fs'       : 'fs',
-            'indesign' : 'indesign'
+            'indesign' : 'indesign',
+            'indesign-xml': 'indesign/xml'
         }
     };
 

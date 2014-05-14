@@ -1,0 +1,18 @@
+/**
+ * Utility module for estk framework
+ */
+
+(function () {
+    var utils = {};
+
+    utils.trycatch = function (callback, errorIntroMessage) {
+        try {
+            callback();
+        } catch (e) {
+            $.writeln('>> ' + errorIntroMessage + ':');
+            $.writeln('ERROR: ' + e);
+        }
+    };
+
+    exports = utils;
+}());

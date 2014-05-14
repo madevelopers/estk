@@ -4,7 +4,49 @@
 
 (function () {
     var indd = {},
-        _ = require('estk!lodash');
+        _ = require('estk!lodash'),
+        utils = require('estk!utils');
+
+    function _styleGetter(style, errorIntroMessage, doc, stylesObject, stylesGroupObject) {
+        var theStyle, theStyleGroup;
+
+        errorIntroMessage = errorIntroMessage || 'Getting paragraph style';
+        doc = doc || indd.getActiveDocument();
+
+        //
+        // TODO: finish this
+        //
+        // function getStyleGroup(groups, groupParent) {
+        //     var groupName;
+
+        //     if (groups.length >= 1) {
+
+        //     } else {
+
+        //     }
+        // }
+
+        utils.trycatch(function () {
+            if (typeof style === 'string') {
+                // This style does not belong to any group
+                theStyle = doc[stylesObject].itemByName(style);
+            } else {
+                // A style that belongs to a group must be an array.
+
+                // We'll just limit this to single level for now
+                //
+                // TODO: fix this
+                //
+                theStyleGroup = doc[stylesGroupObject].itemByName(style[0]);
+
+                if (theStyleGroup.isValid) {
+                    theStyle = theStyleGroup[stylesObject].itemByName(style[1]);
+                }
+            }
+        }, errorIntroMessage);
+
+        return theStyle;
+    }
 
     /**
      * Gets the current active document.
@@ -18,6 +60,37 @@
             exit();
         }
     };
+
+
+    indd.getCellStyle = function (style, errorIntroMessage, doc) {
+        return _styleGetter(style, errorIntroMessage, doc,
+                            'cellStyles', 'cellStyleGroups');
+    };
+
+
+    indd.getCharacterStyle = function (style, errorIntroMessage, doc) {
+        return _styleGetter(style, errorIntroMessage, doc,
+                            'characterStyles', 'characterStyleGroups');
+    };
+
+
+    indd.getObjectStyle = function (style, errorIntroMessage, doc) {
+        return _styleGetter(style, errorIntroMessage, doc,
+                            'objectStyles', 'objectStyleGroups');
+    };
+
+
+    indd.getParagraphStyle = function (style, errorIntroMessage, doc) {
+        return _styleGetter(style, errorIntroMessage, doc,
+                            'paragraphStyles', 'paragraphStyleGroups');
+    };
+
+
+    indd.getTableStyle = function (style, errorIntroMessage, doc) {
+        return _styleGetter(style, errorIntroMessage, doc,
+                            'tableStyles', 'tableStyleGroups');
+    };
+
 
     indd.search = function (searchString, replacementString, config) {
         var defaultOptions,
